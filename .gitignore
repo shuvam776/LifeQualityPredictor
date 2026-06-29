@@ -118,3 +118,43 @@ dist
 .pnp.*
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*
+
+# Generated ML/Notebook artifacts
+backend/predictor Notebook/data_profile_report.html
+backend/predictor Notebook/engineered_features.csv
+backend/predictor Notebook/engineered_features_scaled.csv
+*.pkl
+
+# OS files
+.DS_Store
+Thumbs.db

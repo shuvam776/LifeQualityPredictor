@@ -11,10 +11,13 @@ async function exportDataset() {
   const cities = await City.find().lean();
 
   const rows = cities.map((city: any) => ({
-    city: city.city,
+    city: city.name,
 
     latitude: city.latitude,
     longitude: city.longitude,
+
+    population: city.population,
+    population_density: city.population_density,
 
     aqi: city.aqi,
 
@@ -40,7 +43,8 @@ async function exportDataset() {
 
     cost_of_living: city.cost_of_living,
 
-    population_density: city.population_density,
+    climate_zone: city.climate_zone,
+    development_tier: city.development_tier,
 
     livability_score: city.livability_score,
   }));
@@ -56,11 +60,10 @@ async function exportDataset() {
     "Cities"
   );
 
-  const outputDir =
-    path.join(process.cwd(), "data");
+  const outputDir = "c:/New folder/Desktop/OPENCODE/SUMM/LifeQualityPredictor/backend/predictor Notebook";
 
   if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
+    fs.mkdirSync(outputDir, { recursive: true });
   }
 
   XLSX.writeFile(

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx scripts/seedCities.ts",
+    "seed-full": "tsx scripts/seedFullData.ts",
     "export": "tsx scripts/exportDataset.ts"
   },
   "dependencies": {

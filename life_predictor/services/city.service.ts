@@ -1,7 +1,4 @@
-/**
- * City seed list — used for initial DB population and to patch missing state/country.
- * All cities use the state/country names exactly as required by the IQAir API.
- */
+
 export const cities = [
   { city: "Kolkata",      state: "West Bengal",       country: "India", latitude: 22.5726,  longitude: 88.3639  },
   { city: "Delhi",        state: "Delhi",              country: "India", latitude: 28.6139,  longitude: 77.2090  },
@@ -25,5 +22,4 @@ export const cities = [
   { city: "Bengaluru",    state: "Karnataka",          country: "India", latitude: 12.9716,  longitude: 77.5946  },
 ];
 
-/** Lookup map: city name → seed data */
 export const citySeedMap = new Map(cities.map((c) => [c.city.toLowerCase(), c]));

@@ -111,8 +111,6 @@ function loadSchoolData(): Record<string, number> {
   if (!fs.existsSync(csvPath)) return {};
 
   const lines = fs.readFileSync(csvPath, "utf-8").split("\n");
-  // Data starts at line 4 (0-indexed: line[3])
-  // Format: SlNo, Management, District, LP_R, LP_U, LP_T, UP_R, UP_U, UP_T, Elem_R, Elem_U, Elem_T, ...
   const cityTotals: Record<string, number> = {};
 
   for (let i = 3; i < lines.length; i++) {
@@ -125,11 +123,9 @@ function loadSchoolData(): Record<string, number> {
     const management = cols[1];
     const districtRaw = cols[2];
 
-    // Only use "01-All Management" aggregate rows
     if (!management.startsWith("01-All Management")) continue;
     if (!districtRaw) continue; // skip subtotal rows
 
-    // Strip district code suffix e.g. "BENGALURU U SOUTH-2920" → "BENGALURU U SOUTH"
     const districtName = districtRaw.replace(/-\d+$/, "").trim().toUpperCase();
 
     const city = districtToCityMap[districtName];
@@ -143,10 +139,7 @@ function loadSchoolData(): Record<string, number> {
   return schoolByCity;
 }
 
-/**
- * Get school count for a city from the CSV.
- * Returns null if city not found in the CSV.
- */
+
 export function getSchoolsFromCSV(cityName: string): number | null {
   const data = loadSchoolData();
   const key = Object.keys(data).find(

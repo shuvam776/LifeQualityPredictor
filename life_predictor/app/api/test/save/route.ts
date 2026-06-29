@@ -5,7 +5,7 @@ export async function GET() {
   await connectDB();
 
   const city = await City.create({
-    city: "Kolkata",
+    name: "Kolkata",
     aqi: 98,
     temperature: 31,
     humidity: 75,
