@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/train", {
+    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+    const response = await fetch(`${backendUrl}/train`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
