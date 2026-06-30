@@ -150,10 +150,9 @@ ENV/
 */.ipynb_checkpoints/*
 
 # Generated ML/Notebook artifacts
-backend/predictor Notebook/data_profile_report.html
-backend/predictor Notebook/engineered_features.csv
-backend/predictor Notebook/engineered_features_scaled.csv
-*.pkl
+backend/data_profile_report.html
+backend/engineered_features.csv
+backend/engineered_features_scaled.csv
 
 # OS files
 .DS_Store

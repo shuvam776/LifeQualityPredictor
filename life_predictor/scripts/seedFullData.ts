@@ -30,12 +30,12 @@ async function seedFullData() {
   console.log("Fetching real attributes for cities (APIs + CSVs)...");
   for (const c of seedCities) {
     console.log(`Processing city: ${c.city}...`);
-    
-    // 1. Fetch from local CSVs (fast)
+
+
     const crime = getCrimeFromCSV(c.city);
     const schools = getSchoolsFromCSV(c.city);
 
-    // 2. Fetch Weather (Open-Meteo: unlimited, fast)
+
     let temp: number | null = null;
     let humid: number | null = null;
     try {
@@ -46,7 +46,7 @@ async function seedFullData() {
       console.warn(`[weather] Could not fetch weather for ${c.city}: ${e.message}`);
     }
 
-    // 3. Fetch Population (GeoDB: 1.2s delay if successful, null on error/limit)
+
     let pop: number | null = null;
     let popDensity: number | null = null;
     try {
@@ -55,12 +55,12 @@ async function seedFullData() {
         pop = result.population ?? null;
         popDensity = result.populationDensity ?? null;
       }
-      await sleep(1000); // 1 sec delay to respect rate limit
+      await sleep(1000);
     } catch (e: any) {
       console.warn(`[pop] Could not fetch population for ${c.city}: ${e.message}`);
     }
 
-    // 4. Fetch Hospital Density (data.gov.in)
+
     let hospitalDensity: number | null = null;
     try {
       const count = await getHospitalDensity(c.city);
@@ -70,7 +70,7 @@ async function seedFullData() {
       console.warn(`[hosp] Could not fetch hospital density for ${c.city}: ${e.message}`);
     }
 
-    // 5. Fetch Employment Rate (JSearch)
+
     let employmentRate: number | null = null;
     try {
       employmentRate = await getEmploymentRate(c.city);
@@ -78,18 +78,18 @@ async function seedFullData() {
     } catch (e: any) {
       console.warn(`[jobs] Could not fetch employment rate for ${c.city}: ${e.message}`);
     }
- 
-    // 6. Fetch AQI (IQAir: skip sleep on fail/rate limit)
+
+
     let aqiVal: number | null = null;
     try {
       const aqiRes = await getAQI(c.city, c.state, c.country);
       aqiVal = aqiRes.data.current.pollution?.aqius ?? null;
-      await sleep(1000); // Small sleep, if it rate-limits we just catch it next loop
+      await sleep(1000);
     } catch (e: any) {
       console.warn(`[aqi] Could not fetch AQI for ${c.city}: ${e.message}`);
     }
- 
-    // Cost of Living (Cost of Living API)
+
+
     let costOfLiving: number | null = null;
     try {
       costOfLiving = await getCostOfLiving(c.city);
@@ -98,7 +98,7 @@ async function seedFullData() {
       console.warn(`[cost] Could not fetch cost of living for ${c.city}: ${e.message}`);
     }
 
-    // Internet Score (NetConnect API)
+
     let internetScore: number | null = null;
     try {
       internetScore = await getInternetScore(c.city);
@@ -189,7 +189,7 @@ async function seedFullData() {
       updatedAt: now
     };
 
-    // Calculate score
+
     cityDoc.livability_score = calculateLivability(cityDoc);
     preparedCities.push(cityDoc);
   }
@@ -200,7 +200,7 @@ async function seedFullData() {
   }
   console.log("Seeding complete!");
 
-  // Export to CSV
+
   console.log("Exporting database to dataset.csv...");
   const rows = preparedCities.map((city: any) => ({
     city: city.name,
@@ -227,7 +227,7 @@ async function seedFullData() {
   const worksheet = XLSX.utils.json_to_sheet(rows);
   XLSX.utils.book_append_sheet(workbook, worksheet, "Cities");
 
-  const outputDir = "c:/New folder/Desktop/OPENCODE/SUMM/LifeQualityPredictor/backend/predictor Notebook";
+  const outputDir = "c:/New folder/Desktop/OPENCODE/SUMM/LifeQualityPredictor/backend";
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
@@ -235,10 +235,6 @@ async function seedFullData() {
   const csvFilePath = path.join(outputDir, "dataset.csv");
   XLSX.writeFile(workbook, csvFilePath, { bookType: "csv" });
   console.log(`dataset.csv exported to ${csvFilePath}`);
-
-  const fallbackCsvPath = path.join("c:/New folder/Desktop/OPENCODE/SUMM/LifeQualityPredictor/backend", "dataset.csv");
-  fs.copyFileSync(csvFilePath, fallbackCsvPath);
-  console.log(`dataset.csv copied to backend/ folder`);
 
   process.exit(0);
 }

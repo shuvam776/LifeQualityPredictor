@@ -105,7 +105,7 @@ export default function Dashboard() {
       try {
         data = await res.json();
       } catch (e) {
-        // Not JSON
+
       }
 
       if (res.ok) {
@@ -247,8 +247,8 @@ export default function Dashboard() {
       </header>
 
       <main className="max-w-7xl w-full mx-auto px-6 py-6 flex-grow flex flex-col gap-6">
-        
-        {/* Actions panel */}
+
+        {}
         <section className="bg-white border border-emerald-100/65 rounded-xl p-5 shadow-[0_2px_8px_-3px_rgba(16,185,129,0.08)] flex flex-wrap items-center justify-between gap-4">
           <div className="space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
@@ -308,7 +308,7 @@ export default function Dashboard() {
           </section>
         )}
 
-        {/* Tab switcher */}
+        {}
         <div className="border-b border-zinc-200/80 flex gap-2">
           {["directory", "playground", "diagnostics"].map((tab) => (
             <button
@@ -325,7 +325,7 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* Tab panels */}
+        {}
         <section className="flex-grow">
           {activeTab === "directory" && (
             <div>
@@ -582,11 +582,11 @@ export default function Dashboard() {
                 </div>
               </form>
 
-              {/* Predict Output Panel */}
+              {}
               <div className="lg:col-span-4">
                 <div className="bg-white border border-zinc-200/80 rounded-xl p-5 flex flex-col items-center justify-center text-center min-h-[250px] shadow-[0_2px_8px_-3px_rgba(0,0,0,0.04)] space-y-4">
                   <h4 className="text-[10px] uppercase tracking-wider text-zinc-400 font-semibold">Evaluation Results</h4>
-                  
+
                   {predictedScore !== null ? (
                     <div className="space-y-5 w-full">
                       <div className="grid grid-cols-2 gap-3">
@@ -625,8 +625,8 @@ export default function Dashboard() {
           {activeTab === "diagnostics" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                
-                {/* Feature importances */}
+
+                {}
                 <div className="md:col-span-8 bg-white border border-zinc-200/80 rounded-xl p-5 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.04)] space-y-4">
                   <div>
                     <h4 className="font-semibold text-sm text-zinc-800">ML Model Feature Weights</h4>
@@ -659,7 +659,7 @@ export default function Dashboard() {
                   )}
                 </div>
 
-                {/* Model performance summaries */}
+                {}
                 <div className="md:col-span-4 bg-white border border-zinc-200/80 rounded-xl p-5 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.04)] flex flex-col justify-between gap-4 text-xs">
                   <div className="space-y-3">
                     <h4 className="font-semibold text-zinc-800 text-sm">Performance Metrics</h4>
@@ -690,7 +690,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Terminal Logs widget */}
+              {}
               <div className="bg-[#fcfefe] border border-emerald-100/80 rounded-xl p-4 space-y-3 font-mono text-xs shadow-inner">
                 <div className="flex items-center justify-between border-b border-emerald-100 pb-2">
                   <span className="text-[10px] text-emerald-800 uppercase tracking-wider font-bold">FastAPI Backend Log Stream</span>

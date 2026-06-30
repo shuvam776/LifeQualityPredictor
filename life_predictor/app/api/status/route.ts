@@ -2,13 +2,19 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+    const backendUrl = process.env.BACKEND_URL;
+    if (!backendUrl) {
+      return NextResponse.json({
+        status: "offline",
+        message: "BACKEND_URL environment variable is not configured."
+      });
+    }
     const response = await fetch(`${backendUrl}/status`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
-      next: { revalidate: 0 } // Disable cache
+      next: { revalidate: 0 }
     });
 
     if (!response.ok) {

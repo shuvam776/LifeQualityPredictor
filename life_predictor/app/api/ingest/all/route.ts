@@ -14,7 +14,7 @@ import { calculateLivability } from "@/lib/calculateLivability";
 import fs from "fs";
 import path from "path";
 
-/** Wait ms milliseconds — used to respect API rate limits, aborting early if stop requested */
+
 const sleep = async (ms: number) => {
   const start = Date.now();
   while (Date.now() - start < ms) {
@@ -25,11 +25,7 @@ const sleep = async (ms: number) => {
   }
 };
 
-/**
- * Safely saves a city document to MongoDB.
- * If the document was deleted from MongoDB (e.g. database cleared by another thread/request) or stop requested,
- * it throws a specific error to abort the long-running ingestion pipeline.
- */
+
 async function safeSave(city: any) {
   if ((global as any).abortIngestion) {
     throw new Error("ABORT_PIPELINE");
@@ -41,16 +37,7 @@ async function safeSave(city: any) {
   await city.save();
 }
 
-/**
- * GET /api/ingest/all
- *
- * Master ingestion pipeline — runs on app startup.
- * - No fallback values. API failure → null stored in DB.
- * - Rate limiting: 7s delay between IQAir calls (free plan: ~10/min).
- *   GeoDB has a 1 req/sec limit on free plan — 1.2s delay between calls.
- * - Crime + schools read from local CSVs (no API, no rate limit).
- * - Open-Meteo is unlimited — no delay needed.
- */
+
 export async function GET(request: Request) {
   const log: string[] = [];
   const nullFields: string[] = [];
@@ -71,7 +58,7 @@ export async function GET(request: Request) {
       });
     }
 
-    // ── Step 1: Ensure cities exist in database and load baseline from dataset.csv ──
+
     log.push("Seeding cities with dataset baseline parameters...");
     const datasetPath = path.join(process.cwd(), "..", "backend", "dataset.csv");
     const baselineMap = new Map<string, any>();
@@ -202,7 +189,7 @@ export async function GET(request: Request) {
     let cities = await City.find();
     log.push(`Seeded/Patched ${cities.length} cities.`);
 
-    // ── Step 2: Population via GeoDB (1.2s between calls — 1 req/sec limit) ─
+
     log.push("Fetching population (GeoDB)...");
     for (const city of cities) {
       try {
@@ -223,10 +210,10 @@ export async function GET(request: Request) {
         console.error(`[pop] ${city.name}: ${err.message}`);
       }
       await safeSave(city);
-      await sleep(1200); // GeoDB free: 1 req/sec
+      await sleep(1200);
     }
 
-    // ── Step 3: AQI + Weather via IQAir (7s between calls — ~8/min safe) ─
+
     log.push("Fetching AQI + weather (IQAir)...");
     for (const city of cities) {
       try {
@@ -248,10 +235,10 @@ export async function GET(request: Request) {
         console.error(`[aqi] ${city.name}: ${err.message}`);
       }
       await safeSave(city);
-      await sleep(65000); // IQAir free plan: ~1 call/minute hard limit. 65s = safe.
+      await sleep(65000);
     }
 
-    // ── Step 4: Weather via Open-Meteo for cities still missing temp ──────
+
     log.push("Fetching weather (Open-Meteo for remaining nulls)...");
     for (const city of cities) {
       if (city.temperature !== null && city.temperature !== undefined) continue;
@@ -268,10 +255,10 @@ export async function GET(request: Request) {
         nullFields.push(`${city.name}.temperature (Open-Meteo: ${err.message})`);
       }
       await safeSave(city);
-      // Open-Meteo is free + unlimited — no sleep needed
+
     }
 
-    // ── Step 5: Hospital density via data.gov.in ──────────────────────────
+
     log.push("Fetching hospital density (data.gov.in)...");
     for (const city of cities) {
       try {
@@ -287,10 +274,10 @@ export async function GET(request: Request) {
         nullFields.push(`${city.name}.hospital_density (${err.message})`);
       }
       await safeSave(city);
-      await sleep(500); // gentle rate limit for data.gov.in
+      await sleep(500);
     }
 
-    // ── Step 6: Schools from local CSV (no API) ───────────────────────────
+
     log.push("Loading school density from CSV...");
     for (const city of cities) {
       const count = getSchoolsFromCSV(city.name);
@@ -299,7 +286,7 @@ export async function GET(request: Request) {
       await safeSave(city);
     }
 
-    // ── Step 7: Crime from local CSV (no API) ─────────────────────────────
+
     log.push("Loading crime data from CSV...");
     for (const city of cities) {
       const crime = getCrimeFromCSV(city.name);
@@ -308,7 +295,7 @@ export async function GET(request: Request) {
       await safeSave(city);
     }
 
-    // ── Step 8: Employment Rate via JSearch Job Details API ───────────────
+
     log.push("Fetching employment rates (JSearch)...");
     for (const city of cities) {
       try {
@@ -324,10 +311,10 @@ export async function GET(request: Request) {
         console.error(`[employment] ${city.name}: ${err.message}`);
       }
       await safeSave(city);
-      await sleep(1500); // JSearch rate limit delay
+      await sleep(1500);
     }
 
-    // ── Step 8.5: Internet Score via NetConnect API ────────────────────────
+
     log.push("Fetching internet scores (NetConnect)...");
     for (const city of cities) {
       try {
@@ -343,10 +330,10 @@ export async function GET(request: Request) {
         console.error(`[internet] ${city.name}: ${err.message}`);
       }
       await safeSave(city);
-      await sleep(1000); // NetConnect rate limit delay
+      await sleep(1000);
     }
 
-    // ── Step 8.6: Cost of Living Index via Cost of Living API ─────────────
+
     log.push("Fetching cost of living indices (Cost of Living API)...");
     for (const city of cities) {
       try {
@@ -362,10 +349,10 @@ export async function GET(request: Request) {
         console.error(`[costIndex] ${city.name}: ${err.message}`);
       }
       await safeSave(city);
-      await sleep(1000); // Cost of living rate limit delay
+      await sleep(1000);
     }
 
-    // ── Step 9: Calculate livability scores ───────────────────────────────
+
     log.push("Calculating livability scores...");
     const fresh = await City.find();
     for (const city of fresh) {

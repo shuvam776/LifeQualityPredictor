@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
 
-// ── Crime CSV parser ──────────────────────────────────────────────────────────
-// cPOC.csv: STATE/UT, YEAR, ...crime columns...
-// We use "TOTAL - Theft" + "TOTAL - Robbery" + "TOTAL - Burglary" + "TOTAL - Dacoity"
-// as a composite crime index for the most recent year available per state.
+
+
+
+
 
 const crimeStateToCityMap: Record<string, string[]> = {
   "WEST BENGAL":        ["Kolkata"],
@@ -24,7 +24,7 @@ const crimeStateToCityMap: Record<string, string[]> = {
   "ODISHA":             ["Bhubaneswar"],
 };
 
-// Build reverse map: city name (lowercase) → state name
+
 const cityToState: Record<string, string> = {};
 for (const [state, cities] of Object.entries(crimeStateToCityMap)) {
   for (const city of cities) {
@@ -41,22 +41,22 @@ function loadCrimeData(): Record<string, number> {
   if (!fs.existsSync(csvPath)) return {};
 
   const lines = fs.readFileSync(csvPath, "utf-8").split("\n");
-  // Header: STATE/UT, YEAR, ...
-  // Columns (0-indexed): 0=STATE, 1=YEAR, 29=TOTAL-Dacoity, 30=TOTAL-Robbery, 31=TOTAL-Burglary, 32=TOTAL-Theft
+
+
   const latestByState: Record<string, { year: number; total: number }> = {};
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
 
-    // Parse quoted CSV
+
     const cols = line.split(",").map((c) => c.replace(/"/g, "").trim());
     if (cols.length < 33) continue;
 
     const state = cols[0].toUpperCase();
     const year = parseInt(cols[1], 10);
     if (isNaN(year)) continue;
-    if (state.startsWith("TOTAL")) continue; // skip aggregate rows
+    if (state.startsWith("TOTAL")) continue;
 
     const dacoity  = parseInt(cols[29], 10) || 0;
     const robbery  = parseInt(cols[30], 10) || 0;
@@ -77,10 +77,7 @@ function loadCrimeData(): Record<string, number> {
   return crimeByState;
 }
 
-/**
- * Get crime index for a city (total property crimes from latest year in CSV).
- * Returns null if city/state not found.
- */
+
 export function getCrimeFromCSV(cityName: string): number | null {
   const data = loadCrimeData();
   const state = cityToState[cityName.toLowerCase()];
@@ -89,11 +86,11 @@ export function getCrimeFromCSV(cityName: string): number | null {
   return value !== undefined ? value : null;
 }
 
-// ── Schools CSV parser ────────────────────────────────────────────────────────
-// DistrictWiseSchools2019_20.csv: Karnataka districts only
-// Columns: Sl.No, Management, District, Lower Primary(R,U,T), Upper Primary(R,U,T),
-//          Elementary(R,U,T), Secondary(R,U,T), Higher Secondary(R,U,T)
-// We use Elementary Total (col index 11) for "All Management" rows as school density proxy.
+
+
+
+
+
 
 const districtToCityMap: Record<string, string> = {
   "BENGALURU U NORTH": "Bengaluru",
@@ -124,7 +121,7 @@ function loadSchoolData(): Record<string, number> {
     const districtRaw = cols[2];
 
     if (!management.startsWith("01-All Management")) continue;
-    if (!districtRaw) continue; // skip subtotal rows
+    if (!districtRaw) continue;
 
     const districtName = districtRaw.replace(/-\d+$/, "").trim().toUpperCase();
 

@@ -9,10 +9,10 @@ from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
-def train_model(csv_path="predictor Notebook/dataset.csv", model_output_path="livability_model.pkl"):
+def train_model(csv_path="dataset.csv", model_output_path="livability_model.pkl"):
     if not os.path.exists(csv_path):
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        csv_path = os.path.join(script_dir, "predictor Notebook", "dataset.csv")
+        csv_path = os.path.join(script_dir, "dataset.csv")
         model_output_path = os.path.join(script_dir, "livability_model.pkl")
         if not os.path.exists(csv_path):
             raise FileNotFoundError(f"Dataset not found at {csv_path}.")
@@ -41,7 +41,7 @@ def train_model(csv_path="predictor Notebook/dataset.csv", model_output_path="li
     X = df_clean[num_cols + nom_cols + ord_cols]
     y = df_clean[target_col].values
 
-    # Preprocessing Pipelines
+
     transformers = []
     if num_cols:
         num_transformer = Pipeline(steps=[
@@ -67,7 +67,7 @@ def train_model(csv_path="predictor Notebook/dataset.csv", model_output_path="li
 
     preprocessor = ColumnTransformer(transformers=transformers)
 
-    # Master Pipeline
+
     pipeline = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('regressor', RandomForestRegressor(n_estimators=50, max_depth=4, random_state=42))
@@ -82,7 +82,7 @@ def train_model(csv_path="predictor Notebook/dataset.csv", model_output_path="li
     importances = pipeline.named_steps['regressor'].feature_importances_
     feature_names_out = pipeline.named_steps['preprocessor'].get_feature_names_out()
 
-    # Clean prefixes from feature names out
+
     cleaned_feature_names = []
     for name in feature_names_out:
         cleaned_name = name

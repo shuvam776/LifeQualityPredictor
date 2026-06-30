@@ -1,7 +1,4 @@
-/**
- * Fetches hospital count for a given district from data.gov.in
- * Returns the number of hospitals in that district as a numeric density.
- */
+
 export async function getHospitalDensity(district: string): Promise<number> {
   try {
     const encodedDistrict = encodeURIComponent(district);
@@ -18,7 +15,7 @@ export async function getHospitalDensity(district: string): Promise<number> {
     }
     const data = await response.json();
 
-    // data.count is the number of hospitals in that district
+
     const count = Number(data.count ?? data.total ?? 0);
     return isNaN(count) ? 0 : count;
   } catch (error) {

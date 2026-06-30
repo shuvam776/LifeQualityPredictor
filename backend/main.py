@@ -95,7 +95,7 @@ def run_training():
     global model_bundle
     try:
         log_event("Triggering model training pipeline...")
-        csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "predictor Notebook", "dataset.csv")
+        csv_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dataset.csv")
         bundle = train_model(csv_path=csv_path, model_output_path=MODEL_PATH)
         model_bundle = bundle
         log_event(f"Model trained successfully. Samples: {bundle['metrics']['samples_count']}, R2: {bundle['metrics']['r2']:.4f}")
@@ -114,11 +114,11 @@ def predict_livability(features: CityFeatures):
         input_dict = features.model_dump()
         city_name = input_dict.pop('name', 'Custom City')
         
-        # Build DataFrame with correct feature order
+
         feature_names = model_bundle["feature_names"]
         df_input = pd.DataFrame([input_dict])[feature_names]
         
-        # Predict directly using the pipeline
+
         pred = model_bundle["pipeline"].predict(df_input)[0]
         predicted_score = max(0.0, min(100.0, float(pred)))
         

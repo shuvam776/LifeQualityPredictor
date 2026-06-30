@@ -4,9 +4,9 @@ export async function getPopulation(city: string) {
     "https://wft-geo-db.p.rapidapi.com/v1/geo/cities"
   );
   url.searchParams.set("namePrefix", city);
-  url.searchParams.set("countryIds", "IN");   // India only
-  url.searchParams.set("types", "CITY");       // cities only, no districts/ADM2
-  url.searchParams.set("sort", "-population"); // largest first
+  url.searchParams.set("countryIds", "IN");
+  url.searchParams.set("types", "CITY");
+  url.searchParams.set("sort", "-population");
   url.searchParams.set("limit", "5");
 
   const response = await fetch(url.toString(), {
@@ -26,11 +26,11 @@ export async function getPopulation(city: string) {
 
   if (results.length === 0) return null;
 
-  // Prefer an exact city name match (case-insensitive)
+
   const exactMatch = results.find(
     (r) => r.city?.toLowerCase() === city.toLowerCase() ||
            r.name?.toLowerCase() === city.toLowerCase()
   );
 
-  return exactMatch ?? results[0]; // fallback to first result if no exact match
+  return exactMatch ?? results[0];
 }

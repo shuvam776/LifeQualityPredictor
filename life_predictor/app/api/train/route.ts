@@ -2,7 +2,13 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const backendUrl = process.env.BACKEND_URL || "http://127.0.0.1:8000";
+    const backendUrl = process.env.BACKEND_URL;
+    if (!backendUrl) {
+      return NextResponse.json({
+        success: false,
+        message: "BACKEND_URL environment variable is not configured."
+      }, { status: 500 });
+    }
     const response = await fetch(`${backendUrl}/train`, {
       method: "POST",
       headers: {

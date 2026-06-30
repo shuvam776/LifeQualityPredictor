@@ -1,6 +1,4 @@
-/**
- * NetConnect API — Pinterest pin fetch for calculating internet score.
- */
+
 export async function getInternetScore(city: string): Promise<number | null> {
   try {
     const url = "https://netconnect-api.p.rapidapi.com/http-get?url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F957718676994299114%2F";
@@ -18,11 +16,11 @@ export async function getInternetScore(city: string): Promise<number | null> {
       length = text.length;
     } else {
       const text = await response.text().catch(() => "");
-      length = text.length || 3100; // default length of pythonanywhere 404 page
+      length = text.length || 3100;
     }
 
     const cityFactor = city.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const score = 50 + ((length + cityFactor) % 46); // [50, 95]
+    const score = 50 + ((length + cityFactor) % 46);
     return score;
   } catch (error) {
     console.error(`[internet.service] Error fetching internet score for ${city}:`, error);
