@@ -227,7 +227,7 @@ async function seedFullData() {
   const worksheet = XLSX.utils.json_to_sheet(rows);
   XLSX.utils.book_append_sheet(workbook, worksheet, "Cities");
 
-  const outputDir = "c:/New folder/Desktop/OPENCODE/SUMM/LifeQualityPredictor/backend";
+  const outputDir = path.join(process.cwd(), "..", "backend");
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }

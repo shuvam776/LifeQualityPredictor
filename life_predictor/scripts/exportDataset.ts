@@ -60,7 +60,7 @@ async function exportDataset() {
     "Cities"
   );
 
-  const outputDir = "c:/New folder/Desktop/OPENCODE/SUMM/LifeQualityPredictor/backend";
+  const outputDir = path.join(process.cwd(), "..", "backend");
 
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
